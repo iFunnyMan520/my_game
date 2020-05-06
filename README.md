@@ -4,6 +4,7 @@ This is my first game with PyGame. (-> - move right,
                                     <- - move left,
                                     esc - pause)
 ```
+
 ### Prepare My_Game
 ```
 git clone https://github.com/iFunnyMan520/my_game.git

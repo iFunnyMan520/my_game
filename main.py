@@ -2,6 +2,7 @@ from characters.user.user_character import *
 from characters.user.enemy_characters import *
 from functions.functions import *
 
+
 pygame.init()
 bg = pygame.image.load(r'images/Background.jpg')
 user_img = pygame.image.load(r'images/User.gif')

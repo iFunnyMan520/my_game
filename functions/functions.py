@@ -26,6 +26,7 @@ def pause():
         pygame.display.update()
 
 
+
 """def crush(enemy, user):
     if user.y < enemy.y:
         if enemy.x < (user.x + user_width) / 2 < enemy.width:
