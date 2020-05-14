@@ -29,7 +29,6 @@ class Enemy:
             elif self.level == 3:
                 self.y += 8
 
-
     def destroy(self):
         pass
 

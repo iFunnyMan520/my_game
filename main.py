@@ -4,8 +4,6 @@ from functions.functions import *
 
 
 pygame.init()
-bg = pygame.image.load(r'images/Background.jpg')
-user_img = pygame.image.load(r'images/User.gif')
 
 
 def create_enemy_array(array):
@@ -21,7 +19,9 @@ def run_game():
     game = True
     user = User(display, user_img, user_x, user_y)
 
-    enemies = []
+    cooldown_user = 0
+    cooldown_enemies = 0
+
     create_enemy_array(enemies)
 
     while game:
@@ -32,15 +32,38 @@ def run_game():
 
         display.blit(bg, (0, 0))
 
-        key_move = pygame.key.get_pressed()
-        if key_move[pygame.K_ESCAPE]:
-            pause()
+        write_text('Score: %s' % scores, 20, 50)
 
-        user.move(key_move)
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_ESCAPE]:
+            pause()
+        if not cooldown_user:
+            if keys[pygame.K_SPACE]:
+                user_bullets.append(Bullet(user.x + user.width / 2, user.y))
+                cooldown_user = 20
+        else:
+            cooldown_user -= 1
+
+        for bullet in user_bullets:
+            if not bullet.user_bullet_move():
+                user_bullets.remove(bullet)
+
+        user.move(keys)
         for enemy in enemies:
             enemy.move()
             enemy.show()
+            if not cooldown_enemies:
+                enemies_bullets.append(Bullet(enemy.x + enemy.width / 2, enemy.y +
+                                       enemy.height))
+                cooldown_enemies = 30
+            else:
+                cooldown_enemies -= 1
+            for bullet in enemies_bullets:
+                if not bullet.enemies_bullet_move():
+                    enemies_bullets.remove(bullet)
 
+            if crush(enemy, user):
+                game = False
 
         user.show()
 
@@ -48,6 +71,11 @@ def run_game():
 
         fps.tick(60)
 
+    return game_over()
 
-run_game()
+
+while run_game():
+    pass
+pygame.quit()
+quit()
 
