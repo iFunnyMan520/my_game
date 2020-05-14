@@ -2,6 +2,7 @@
 ```
 This is my first game with PyGame. (-> - move right,
                                     <- - move left,
+                                    space - fire,
                                     esc - pause)
 ```
 
