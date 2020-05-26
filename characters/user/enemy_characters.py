@@ -13,24 +13,30 @@ class Enemy:
         self.height = height
         self.level = level
 
-    def show(self):
-        self._display.blit(self._img, (self.x, self.y))
-
     def move(self):
-
-        if self.y >= display_width:
-            self.y = 0
-            self.x = random.randint(1, 8) * 100
-        else:
+        if self.y < display_width:
+            self._display.blit(self._img, (self.x, self.y))
             if self.level == 1:
                 self.y += 6
             elif self.level == 2:
                 self.y += 7
             elif self.level == 3:
                 self.y += 8
+        else:
+            self.y = 0
+            self.x = random.randint(1, 8) * 100
 
-    def destroy(self):
-        pass
+    def destroy(self, bullets):
+        for bullet in bullets:
+            if self.y + self.height > bullet.y:
+                if self.x <= (
+                        bullet.x + bullet.width / 2) <= self.x + self.width:
+                    pygame.mixer.Sound.play(enemies_kill_sound)
+                    self.y = 0
+                    self.x = random.randint(1, 8) * 100
+                    bullets.remove(bullet)
+                    return True
+        return False
 
 
 

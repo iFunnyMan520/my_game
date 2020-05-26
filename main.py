@@ -3,7 +3,8 @@ from characters.user.enemy_characters import *
 from functions.functions import *
 
 
-pygame.init()
+
+scores = 0
 
 
 def create_enemy_array(array):
@@ -16,11 +17,9 @@ def create_enemy_array(array):
 
 
 def run_game():
+    global cooldown_user, scores
     game = True
     user = User(display, user_img, user_x, user_y)
-
-    cooldown_user = 0
-    cooldown_enemies = 0
 
     create_enemy_array(enemies)
 
@@ -32,14 +31,16 @@ def run_game():
 
         display.blit(bg, (0, 0))
 
-        write_text('Score: %s' % scores, 20, 50)
+        write_text(f'Score: {scores}', 20, 50)
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_ESCAPE]:
             pause()
         if not cooldown_user:
             if keys[pygame.K_SPACE]:
-                user_bullets.append(Bullet(user.x + user.width / 2, user.y))
+                pygame.mixer.Sound.play(bullet_sound)
+                user_bullets.append(Bullet(user.x + user.width / 2, user.y,
+                                           bullet_user_img))
                 cooldown_user = 20
         else:
             cooldown_user -= 1
@@ -49,23 +50,18 @@ def run_game():
                 user_bullets.remove(bullet)
 
         user.move(keys)
-        for enemy in enemies:
-            enemy.move()
-            enemy.show()
-            if not cooldown_enemies:
-                enemies_bullets.append(Bullet(enemy.x + enemy.width / 2, enemy.y +
-                                       enemy.height))
-                cooldown_enemies = 30
-            else:
-                cooldown_enemies -= 1
-            for bullet in enemies_bullets:
-                if not bullet.enemies_bullet_move():
-                    enemies_bullets.remove(bullet)
-
-            if crush(enemy, user):
-                game = False
-
         user.show()
+        if enemies_move(enemies, user_bullets):
+            scores += 1
+
+        if crush(enemies, user):
+            enemies.clear()
+            enemies_bullets.clear()
+            user_bullets.clear()
+            pygame.mixer.Sound.play(endgame_sound)
+            write_text(f'Max score: {scores}', 350, 450)
+            scores = 0
+            game = False
 
         pygame.display.update()
 
@@ -78,4 +74,6 @@ while run_game():
     pass
 pygame.quit()
 quit()
+
+
 
